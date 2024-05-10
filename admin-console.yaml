@@ -1,0 +1,60 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: admin-console 
+spec: 
+  selector: 
+    matchLabels: 
+      app: admin-console 
+  template: 
+    metadata: 
+      labels: 
+        app: admin-console 
+    spec: 
+      containers: 
+      - name: admin-console 
+        image: yuragranovsky/admin-console 
+        resources: 
+          limits: 
+            memory: "300Mi" 
+            cpu: "300m" 
+        env: 
+        - name: CONFIG_SERVER_HOST 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: configServer 
+        - name: MONGO_PASSWORD 
+          valueFrom: 
+            secretKeyRef: 
+              key: mongoPassword 
+              name: pm-secret
+        - name: AWS_ACCESS_KEY_ID 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: awsAccessKeyId 
+        - name: AWS_SECRET_ACCESS_KEY 
+          valueFrom: 
+            secretKeyRef: 
+              key: awsSecretAccessKey 
+              name: pm-secret  
+        - name: STREAM_API_SECRET 
+          valueFrom: 
+            secretKeyRef: 
+              key:  awsSecretAccessKey 
+              name: pm-secret         
+        ports:
+        - containerPort: 8080      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-console
+spec:
+  selector:
+    app: admin-console
+  ports:
+  - port: 8080
+    targetPort: 8080
+              

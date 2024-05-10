@@ -1,0 +1,45 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: sensor-range-provider 
+spec: 
+  selector: 
+    matchLabels: 
+      app: sensor-range-provider 
+  template: 
+    metadata: 
+      labels: 
+        app: sensor-range-provider 
+    spec: 
+      containers: 
+      - name: sensor-range-provider 
+        image: yuragranovsky/sensor-range-provider 
+        resources: 
+          limits: 
+            memory: "300Mi" 
+            cpu: "300m" 
+        env: 
+        - name: CONFIG_SERVER_HOST 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: configServer 
+        - name: MONGO_PASSWORD 
+          valueFrom: 
+            secretKeyRef: 
+              key: mongoPassword 
+              name: pm-secret  
+        ports:
+        - containerPort: 8585      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sensor-range-provider
+spec:
+  selector:
+    app: sensor-range-provider
+  ports:
+  - port: 8585
+    targetPort: 8585
+              

@@ -5,4 +5,10 @@ metadata:
 data:
   configServer: config-server
   awsAccessKeyId: AKIAQ3EGU6D2ZWOX7QBY
-  
+  adminConsoleHost: admin-console
+  accountsProviderHost: accounts-provider
+  emailsProviderHost: sensor-emails-provider
+  rangeProviderHost: sensor-range-
+  TZ: "GMT+3"
+
+

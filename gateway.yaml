@@ -1,0 +1,59 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: gateway 
+spec: 
+  selector: 
+    matchLabels: 
+      app: gateway 
+  template: 
+    metadata: 
+      labels: 
+        app: gateway 
+    spec: 
+      containers: 
+      - name: gateway 
+        image: yuragranovsky/gateway 
+        resources: 
+          limits: 
+            memory: "300Mi" 
+            cpu: "300m" 
+        env: 
+        - name: CONFIG_SERVER_HOST 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: configServer
+        - name: ADMIN_CONSOLE_HOST 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: adminConsoleHost
+        - name: ACCOUNTS_PROVIDER_HOST 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: accountsProviderHost
+        - name: RANGE_PROVIDER_HOST 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: rangeProviderHost                      
+        
+        ports:
+        - containerPort: 9595      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+spec:
+  selector:
+    app: gateway
+  ports:
+  - port: 9595
+    targetPort: 9595
+  type: LoadBalancer  
+    
+    
+              

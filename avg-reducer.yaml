@@ -1,0 +1,46 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: avg-reducer 
+spec: 
+  selector: 
+    matchLabels: 
+      app: avg-reducer 
+  template: 
+    metadata: 
+      labels: 
+        app: avg-reducer 
+    spec: 
+      containers: 
+      - name: avg-reducer 
+        image: yuragranovsky/avg-reducer 
+        resources: 
+          limits: 
+            memory: "300Mi" 
+            cpu: "300m" 
+        env: 
+        - name: CONFIG_SERVER_HOST 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: configServer 
+        - name: AWS_ACCESS_KEY_ID 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: awsAccessKeyId 
+        - name: AWS_SECRET_ACCESS_KEY 
+          valueFrom: 
+            secretKeyRef: 
+              key: awsSecretAccessKey 
+              name: pm-secret  
+        - name: STREAM_API_SECRET 
+          valueFrom: 
+            secretKeyRef: 
+              key:  awsSecretAccessKey 
+              name: pm-secret
+        - name: REDIS_PASSWORD 
+          valueFrom: 
+            secretKeyRef: 
+              key:  redisPassword 
+              name: pm-secret 

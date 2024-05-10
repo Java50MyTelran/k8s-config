@@ -1,0 +1,46 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: analyzer 
+spec: 
+  selector: 
+    matchLabels: 
+      app: analyzer 
+  template: 
+    metadata: 
+      labels: 
+        app: analyzer 
+    spec: 
+      containers: 
+      - name: analyzer 
+        image: yuragranovsky/analyzer 
+        resources: 
+          limits: 
+            memory: "300Mi" 
+            cpu: "300m" 
+        env: 
+        - name: CONFIG_SERVER_HOST 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: configServer
+        - name: TZ 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: TZ 
+        - name: AWS_ACCESS_KEY_ID 
+          valueFrom:  
+            configMapKeyRef: 
+              name: pm-config-map 
+              key: awsAccessKeyId 
+        - name: AWS_SECRET_ACCESS_KEY 
+          valueFrom: 
+            secretKeyRef: 
+              key: awsSecretAccessKey 
+              name: pm-secret  
+        - name: STREAM_API_SECRET 
+          valueFrom: 
+            secretKeyRef: 
+              key:  awsSecretAccessKey 
+              name: pm-secret 
